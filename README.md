@@ -1,12 +1,16 @@
 # SIP Client for Rasperry Pi
-Repositori ini digunakan untuk impementasi SIP client menggunakan modul baresip dan python wrapper baresipy, kamu dapat menggunakan freepbx sebagai SIP servernya atau apapun yang sejenis.
+This repository is used for SIP client implementation using baresip module and python wrapper baresipy, you can use freepbx as the SIP server or anything similar.
 
-Untuk instalasi freepbx server pada debian os dapat mengikuti cara di official dokumnetasinya atau repositori githubnya [FreePBX](https://github.com/FreePBX/sng_freepbx_debian_install "freepbx debian install")
+For freepbx server installation on debian os you can follow the method in the official documentation or github repository [FreePBX](https://github.com/FreePBX/sng_freepbx_debian_install "freepbx debian install")
 
-### Hardware configuration
+## Hardware configuration
+Unfortunately, the Raspberry Pi only supports output jacks such as speakers and headphones. You have to add additional input for a microphone such as the USB audio below. The schematic can be seen [here](https://github.com/nurfauziskandar/raspberry-sip-client/blob/main/hardware/images/wiring.png "wiring") 
 
+<img src="hardware/images/soundcard.jpg" width=50% height=100%>
 
-### Install dependencies
+<img src="hardware/images/raspi.jpg" width=50% height=100%>
+
+## Install dependencies
 ```
 sudo apt update
 sudo apt install python3-pip
@@ -16,7 +20,7 @@ sudo apt install ffmpeg
 sudo apt install git
 ```
 
-### Clone this repo and create venv
+## Clone this repo and create venv
 ```
 git clone https://github.com/nurfauziskandar/raspberry-sip-client.git
 cd raspberry-sip-client
@@ -25,18 +29,18 @@ source sipclient/bin/activate
 ln -s /usr/bin/ffmpeg sipclient/bin/ffmpeg
 ```
 
-### Install python lib
+## Install python lib
 ```
 pip3 install -r requirement.txt
 ```
 
-### Dont forget to set default output on raspi-config.
+## Dont forget to set default output on raspi-config.
 ```
 sudo raspi-config
 Choose, System Options -> Audio -> bcm2835 Headphones or headphone only
 ```
 
-### You can run this SIP Client as a service/systemd (optional)
+## You can run this SIP Client as a service/systemd (optional)
 ```
 [Unit]
 Description=SIP Client Script as a Service
@@ -54,3 +58,6 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 ```
+
+### Note
+You can also run this code without venv, if you have an issue, please let me know, you can open an issue or can contact me on iskandar@codezero.id
