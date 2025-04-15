@@ -1,0 +1,15 @@
+[Unit]
+Description=SIP Client Script as a Service
+After=network-online.target sound.target local-fs.target
+Wants=network-online.target sound.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/raspberry-sip-client
+ExecStart=/home/pi/raspberry-sip-client/sipclient/bin/python /home/pi/raspberry-sip-client/main.py
+Environment="PATH=/home/pi/raspberry-sip-client/sipclient/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

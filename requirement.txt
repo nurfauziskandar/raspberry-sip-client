@@ -1,0 +1,4 @@
+baresipy
+RPi.GPIO
+python-dotenv
+sounddevice
