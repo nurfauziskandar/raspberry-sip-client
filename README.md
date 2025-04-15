@@ -30,6 +30,15 @@ ln -s /usr/bin/ffmpeg sipclient/bin/ffmpeg
 ```
 
 ## Install python lib
+rename .env.example to .env and edit it
+```
+DIAL_CALL=016                       # For calling another SIP client
+USER_DIAL=015                       # For you username
+PASSWORD=YourPassword               # Your password
+FREEPBX_SERVER=123.193.120.217      # IP or host your server pabx
+```
+
+## Install python lib
 ```
 pip3 install -r requirement.txt
 ```
