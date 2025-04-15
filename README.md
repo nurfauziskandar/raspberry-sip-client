@@ -29,7 +29,7 @@ source sipclient/bin/activate
 ln -s /usr/bin/ffmpeg sipclient/bin/ffmpeg
 ```
 
-## Install python lib
+## Add .env file
 rename .env.example to .env and edit it
 ```
 DIAL_CALL=016                       # For calling another SIP client
