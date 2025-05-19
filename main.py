@@ -13,11 +13,14 @@ from pathlib import Path
 # Konfigurasi GPIO
 BUTTON_CALL = 17  # GPIO 17 untuk tombol call
 BUTTON_HANGUP = 27  # GPIO 27 untuk tombol hangup
+BUTTON_LED = 24  # GPIO 24 untuk led
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUTTON_CALL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(BUTTON_HANGUP, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(BUTTON_LED, GPIO.OUT)
+GPIO.output(BUTTON_LED, GPIO.LOW)
 
 def update_audio_source(file_path, new_device):
     try:
@@ -76,6 +79,7 @@ class voIP(BareSIP):
     # events
     def handle_incoming_call(self, number):
         print("Incoming call: " + number)
+        GPIO.output(BUTTON_LED, GPIO.HIGH)
         self.incoming_call = 1
         if self.call_established:
             print("already in a call, rejecting")
@@ -92,6 +96,7 @@ class voIP(BareSIP):
         if status != self._call_status:
             print("Call Status: " + status)
             if status == "DISCONNECTED":
+                GPIO.output(BUTTON_LED, GPIO.LOW)
                 self.incoming_call = 0
                 self.flag = 0
 
@@ -109,6 +114,7 @@ class voIP(BareSIP):
     def handle_call_ended(self, reason, number=None):
         self.incoming_call = 0
         self.flag = 0
+        GPIO.output(BUTTON_LED, GPIO.LOW)
         print("Call ended")
         print(f"Number: {number} , Reason: {reason}")
 
@@ -175,7 +181,16 @@ password = os.getenv("PASSWORD")
 server = os.getenv("FREEPBX_SERVER")
 
 if dialCall == None or user == None or password == None or server == None:
+    print("Tidak ada file .env")
     exit()
+
+if dialCall == "" or user == "" or password == "" or server == "":
+    print("File .env  tidak lengkap data konfigurasinya")
+    exit()
+
+dialCall = dialCall.split(",")
+nomorTelp = dialCall[0]
+countDial = 0
 
 update_config(f"{homeDir}/.baresip/accounts", f"<sip:{user}@{server}>;auth_pass={password}")
 
@@ -184,22 +199,36 @@ sip = voIP(user, password, server)
 try:
     # Loop utama
     while True:
-        if GPIO.input(BUTTON_CALL) == GPIO.LOW:
+        if GPIO.input(BUTTON_CALL) == GPIO.LOW and GPIO.input(BUTTON_HANGUP) != GPIO.LOW:
             print('You pushed call')
             if sip.incoming_call == 1 and sip.flag == 0:
                 print("Menerima panggilan masuk...")
+                GPIO.output(BUTTON_LED, GPIO.LOW)
                 sip.accept_call()
                 sip.flag = 1
             if sip.incoming_call == 0 and sip.flag == 0:
                 print('Memulai panggilan...')
-                sip.call(f"{dialCall}@{server}")
+                sip.call(f"{nomorTelp}@{server}")
                 sip.flag = 1
 
-        if GPIO.input(BUTTON_HANGUP) == GPIO.LOW:
+        if GPIO.input(BUTTON_HANGUP) == GPIO.LOW and GPIO.input(BUTTON_CALL) != GPIO.LOW:
             print('You pushed Hang')
+            GPIO.output(BUTTON_LED, GPIO.LOW)
             sip.flag = 0
             sip.incoming_call = 0
             sip.hang()
+
+        if GPIO.input(BUTTON_HANGUP) == GPIO.LOW and GPIO.input(BUTTON_CALL) == GPIO.LOW:
+            countDial = countDial + 1
+            if countDial == len(dialCall):
+                countDial = 0
+            nomorTelp = dialCall[countDial]
+            print(f'You pushed {countDial} times')
+            print(f'dial you call is {nomorTelp}')
+            GPIO.output(BUTTON_LED, GPIO.HIGH)
+            sleep(0.5)
+            GPIO.output(BUTTON_LED, GPIO.LOW)
+            
 
         sleep(0.5)
 

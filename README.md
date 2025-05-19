@@ -32,8 +32,8 @@ ln -s /usr/bin/ffmpeg sipclient/bin/ffmpeg
 ## Add .env file
 rename .env.example to .env and edit it
 ```
-DIAL_CALL=016                       # For calling another SIP client
-USER_DIAL=015                       # For you username
+DIAL_CALL=001,011,012               # For calling another SIP client
+USER_DIAL=002                       # For you username
 PASSWORD=YourPassword               # Your password
 FREEPBX_SERVER=123.193.120.217      # IP or host your server pabx
 ```
@@ -50,6 +50,10 @@ Choose, System Options -> Audio -> bcm2835 Headphones or headphone only
 ```
 
 ## You can run this SIP Client as a service/systemd (optional)
+create file on /etc/systemd/system/sipclient.service and paste configuration below, before that you need adjust for own configuration, like a path and user host.
+```
+sudo nano /etc/systemd/system/sipclient.service
+```
 ```
 [Unit]
 Description=SIP Client Script as a Service
