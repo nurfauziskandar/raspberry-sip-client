@@ -32,6 +32,12 @@ ln -s /usr/bin/ffmpeg sipclient/bin/ffmpeg
 ## Add .env file
 rename .env.example to .env and edit it
 ```
+mv .env.example .env
+```
+```
+nano .env
+```
+```
 DIAL_CALL=001,011,012               # For calling another SIP client
 USER_DIAL=002                       # For you username
 PASSWORD=YourPassword               # Your password
