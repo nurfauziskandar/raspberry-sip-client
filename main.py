@@ -199,6 +199,17 @@ sip = voIP(user, password, server)
 try:
     # Loop utama
     while True:
+        if GPIO.input(BUTTON_HANGUP) == GPIO.LOW and GPIO.input(BUTTON_CALL) == GPIO.LOW:
+            countDial = countDial + 1
+            if countDial == len(dialCall):
+                countDial = 0
+            nomorTelp = dialCall[countDial]
+            print(f'You pushed {countDial} times')
+            print(f'dial you call is {nomorTelp}')
+            GPIO.output(BUTTON_LED, GPIO.HIGH)
+            sleep(0.5)
+            GPIO.output(BUTTON_LED, GPIO.LOW)
+            
         if GPIO.input(BUTTON_CALL) == GPIO.LOW and GPIO.input(BUTTON_HANGUP) != GPIO.LOW:
             print('You pushed call')
             if sip.incoming_call == 1 and sip.flag == 0:
@@ -217,18 +228,6 @@ try:
             sip.flag = 0
             sip.incoming_call = 0
             sip.hang()
-
-        if GPIO.input(BUTTON_HANGUP) == GPIO.LOW and GPIO.input(BUTTON_CALL) == GPIO.LOW:
-            countDial = countDial + 1
-            if countDial == len(dialCall):
-                countDial = 0
-            nomorTelp = dialCall[countDial]
-            print(f'You pushed {countDial} times')
-            print(f'dial you call is {nomorTelp}')
-            GPIO.output(BUTTON_LED, GPIO.HIGH)
-            sleep(0.5)
-            GPIO.output(BUTTON_LED, GPIO.LOW)
-            
 
         sleep(0.5)
 
